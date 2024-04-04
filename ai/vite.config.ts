@@ -25,8 +25,12 @@ export default defineConfig(({ mode }) => {
       analog({
         nitro: {
           output: {
-            dir: "./dist/ai/analog/public",
-            serverDir: "./dist/ai/analog/public/_worker.js",
+            // this will generate the compiled files under
+            // ai/dist & the worker files will be under ai/dist/_worker.js folder
+            // test the build locally for cloudflare:
+            // BUILD_PRESET=cloudflare-pages npx nx build ai
+            dir: "./dist",
+            serverDir: "./dist/_worker.js",
           },
         },
       }),
