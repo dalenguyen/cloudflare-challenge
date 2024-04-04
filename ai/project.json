@@ -1,0 +1,63 @@
+{
+  "name": "ai",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "./ai/src",
+  "targets": {
+    "build": {
+      "executor": "@analogjs/platform:vite",
+      "outputs": [
+        "{options.outputPath}",
+        "{workspaceRoot}/dist/ai/.nitro",
+        "{workspaceRoot}/dist/ai/ssr",
+        "{workspaceRoot}/dist/ai/analog"
+      ],
+      "options": {
+        "main": "ai/src/main.ts",
+        "configFile": "ai/vite.config.ts",
+        "outputPath": "dist/ai/client",
+        "tsConfig": "ai/tsconfig.app.json"
+      },
+      "defaultConfiguration": "production",
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "sourcemap": false,
+          "mode": "production"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@analogjs/platform:vite-dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "ai:build",
+        "port": 4200
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "ai:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "ai:build:production"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "ai:build"
+      }
+    },
+    "test": {
+      "executor": "@analogjs/platform:vitest",
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
+    }
+  },
+  "tags": []
+}
