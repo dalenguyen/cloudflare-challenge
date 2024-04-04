@@ -13,7 +13,7 @@ import { RouterOutlet } from "@angular/router";
     <footer class="max-w-96 m-auto py-8">
       <a
         class="underline"
-        href="https://github.com/dalenguyen/cloudflare-challange"
+        href="https://github.com/dalenguyen/cloudflare-challenge"
         target="_blank"
         >Created by Dale Nguyen</a
       >
