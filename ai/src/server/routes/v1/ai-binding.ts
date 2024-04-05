@@ -6,10 +6,7 @@ import {
   getRequestHeaders,
 } from "h3";
 import { Ai } from "@cloudflare/ai";
-
-const cloudflareRequestContextSymbol = Symbol.for(
-  "__cloudflare-request-context__"
-);
+import { getRequestContext } from "../../helpers/get-request-context";
 
 const ACCOUNT_ID = process.env["CF_ACCOUNT_ID"];
 const AI_TOKEN = process.env["WORKER_AI_TOKEN"];
@@ -22,12 +19,7 @@ export default defineEventHandler(async (event) => {
   const context = event.context;
   const headers = getRequestHeaders(event);
 
-  const cloudflareRequestContext =
-    (
-      globalThis as unknown as {
-        [cloudflareRequestContextSymbol]: any;
-      }
-    )[cloudflareRequestContextSymbol] || null;
+  const cloudflareRequestContext = getRequestContext();
 
   return { context, headers, cloudflareRequestContext };
   //   const requestURL = await getRequestURL(event);
