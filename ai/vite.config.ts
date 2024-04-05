@@ -28,6 +28,9 @@ export default defineConfig(({ mode }) => {
         ],
       },
     },
+    ssr: {
+      noExternal: ["primeng"],
+    },
     plugins: [
       analog({
         nitro: {
