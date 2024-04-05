@@ -21,6 +21,9 @@ export default defineConfig(({ mode }) => {
         allow: ["."],
       },
     },
+    ssr: {
+      noExternal: ["primeng"],
+    },
     plugins: [
       analog({
         nitro: {
