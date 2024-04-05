@@ -33,6 +33,12 @@ export default defineConfig(({ mode }) => {
             serverDir: "./dist/_worker.js",
           },
         },
+        vite: {
+          // Required to use the Analog SFC format
+          experimental: {
+            supportAnalogFormat: true,
+          },
+        },
       }),
 
       nxViteTsPaths(),
