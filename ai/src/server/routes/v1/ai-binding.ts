@@ -1,5 +1,15 @@
-import { defineEventHandler, readBody, getRequestURL, createError } from "h3";
+import {
+  defineEventHandler,
+  readBody,
+  getRequestURL,
+  createError,
+  getRequestHeaders,
+} from "h3";
 import { Ai } from "@cloudflare/ai";
+
+const cloudflareRequestContextSymbol = Symbol.for(
+  "__cloudflare-request-context__"
+);
 
 const ACCOUNT_ID = process.env["CF_ACCOUNT_ID"];
 const AI_TOKEN = process.env["WORKER_AI_TOKEN"];
@@ -9,6 +19,17 @@ interface Env {
 }
 
 export default defineEventHandler(async (event) => {
+  const context = event.context;
+  const headers = getRequestHeaders(event);
+
+  const cloudflareRequestContext =
+    (
+      globalThis as unknown as {
+        [cloudflareRequestContextSymbol]: any;
+      }
+    )[cloudflareRequestContextSymbol] || null;
+
+  return { context, headers, cloudflareRequestContext };
   //   const requestURL = await getRequestURL(event);
 
   //   // TODO: improve the security check for invalid requests
