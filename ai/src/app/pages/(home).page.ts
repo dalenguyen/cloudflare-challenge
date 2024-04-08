@@ -57,6 +57,8 @@ export default class HomeComponent {
   errorMessage = "";
 
   async onSubmit() {
+    this.cd.detectChanges();
+
     if (this.prompt.length < 10) {
       this.errorMessage = "Prompt length must greater than 10 characters!";
       return;
