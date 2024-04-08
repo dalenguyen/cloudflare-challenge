@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
@@ -22,7 +21,6 @@ import {
 
     <app-audio-recorder (audioReady)="getTextFromAudio($event)" />
 
-    <form>
       <input
         pInput
         #input
@@ -38,7 +36,6 @@ import {
       >
         Generate Image
       </button>
-    </form>
 
     @if (response?.result) {
       <div>
@@ -62,7 +59,6 @@ import {
 })
 export default class HomeComponent {
   private aiService = inject(AiService);
-  private cd = inject(ChangeDetectorRef);
 
   input = viewChild.required<ElementRef<HTMLInputElement>>('input')
 
@@ -98,8 +94,6 @@ export default class HomeComponent {
       console.log(response);
 
       this.input().nativeElement.value = response.text
-
-      // this.cd.detectChanges();
     } catch (error: any) {
       this.errorMessage = error?.message;
     }
