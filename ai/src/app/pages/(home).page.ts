@@ -1,50 +1,75 @@
-import { Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from "@angular/core";
 import { AiService } from "../services/ai.service";
 import { firstValueFrom } from "rxjs";
 import { CommonModule } from "@angular/common";
+import { AudioRecorderComponent } from "../components/audio.component";
+import {
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 @Component({
   selector: "ai-home",
   standalone: true,
-  imports: [CommonModule],
   template: `
     <h1>Text 2 Image Generation</h1>
 
-    <input
-      pInput
-      type="text"
-      id="text"
-      class="my-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      placeholder="cyperpunk cat"
-      required
-      #input
-    />
-    <button
-      class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-      (click)="onSubmit(input.value)"
-    >
-      Click me
-    </button>
+    <app-audio-recorder (audioReady)="getTextFromAudio($event)" />
 
-    @if (response?.result) {
-    <div>
-      <img
-        src="data:image/png;base64, {{ response?.result }}"
-        alt="Generated image"
+      <input
+        pInput
+        #input
+        type="text"
+        id="text"
+        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="cyperpunk cat"
+        required
       />
-    </div>
-    } @if(errorMessage) {
-    <p class="text-red-500">{{ errorMessage }}</p>
+      <button
+        class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+        (click)="onSubmit()"
+      >
+        Generate Image
+      </button>
+
+    @if (image()) {
+      <div>
+        <img
+          src="data:image/png;base64, {{ image() }}"
+          alt="Generated image"
+        />
+      </div>
+    }
+    @if (errorMessage) {
+      <p class="text-red-500">{{ errorMessage }}</p>
     }
   `,
+  imports: [
+    CommonModule,
+    AudioRecorderComponent,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class HomeComponent {
   private aiService = inject(AiService);
 
-  response: { result: string } | undefined;
+  input = viewChild.required<ElementRef<HTMLInputElement>>('input')
+
+  image = signal('')
   errorMessage = "";
 
-  async onSubmit(prompt: string) {
-    if (prompt.length < 10) {
+  async onSubmit() {
+    console.log(`prompt`, this.input().nativeElement.value);
+
+    if (this.input().nativeElement.value.length < 10) {
       this.errorMessage = "Prompt length must greater than 10 characters!";
       return;
     }
@@ -52,7 +77,29 @@ export default class HomeComponent {
     this.errorMessage = "";
 
     try {
-      this.response = await firstValueFrom(this.aiService.sendRequest(prompt));
+      const response = await firstValueFrom(
+        this.aiService.getImageFromText(this.input().nativeElement.value),
+      );
+
+      if (response.result) {
+        this.image.set(response.result)
+        console.log(this.image())
+      }
+    } catch (error: any) {
+      this.errorMessage = error?.message;
+    }
+  }
+
+  async getTextFromAudio(data: string) {
+    try {
+      data = data.substring("data:audio/wav;base64,".length);
+      const response = await firstValueFrom(
+        this.aiService.getTextFromAudio(data),
+      );
+
+      console.log(response);
+
+      this.input().nativeElement.value = response.text
     } catch (error: any) {
       this.errorMessage = error?.message;
     }
