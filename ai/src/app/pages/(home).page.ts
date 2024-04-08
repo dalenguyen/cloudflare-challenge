@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   inject,
+  signal,
   viewChild,
 } from "@angular/core";
 import { AiService } from "../services/ai.service";
@@ -37,10 +38,10 @@ import {
         Generate Image
       </button>
 
-    @if (response?.result) {
+    @if (image()) {
       <div>
         <img
-          src="data:image/png;base64, {{ response?.result }}"
+          src="data:image/png;base64, {{ image() }}"
           alt="Generated image"
         />
       </div>
@@ -62,7 +63,7 @@ export default class HomeComponent {
 
   input = viewChild.required<ElementRef<HTMLInputElement>>('input')
 
-  response: { result: string } | undefined;
+  image = signal('')
   errorMessage = "";
 
   async onSubmit() {
@@ -76,9 +77,14 @@ export default class HomeComponent {
     this.errorMessage = "";
 
     try {
-      this.response = await firstValueFrom(
+      const response = await firstValueFrom(
         this.aiService.getImageFromText(this.input().nativeElement.value),
       );
+
+      if (response.result) {
+        this.image.set(response.result)
+        console.log(this.image())
+      }
     } catch (error: any) {
       this.errorMessage = error?.message;
     }
