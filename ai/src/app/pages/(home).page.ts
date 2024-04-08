@@ -1,20 +1,18 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   inject,
-  model,
-  signal,
+  viewChild,
 } from "@angular/core";
 import { AiService } from "../services/ai.service";
 import { firstValueFrom } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { AudioRecorderComponent } from "../components/audio.component";
 import {
-  FormBuilder,
-  FormControl,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from "@angular/forms";
 @Component({
   selector: "ai-home",
@@ -24,12 +22,12 @@ import {
 
     <app-audio-recorder (audioReady)="getTextFromAudio($event)" />
 
-    <form [formGroup]="form">
+    <form>
       <input
         pInput
+        #input
         type="text"
         id="text"
-        formControlName="prompt"
         class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="cyperpunk cat"
         required
@@ -60,24 +58,21 @@ import {
     FormsModule,
     ReactiveFormsModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class HomeComponent {
   private aiService = inject(AiService);
   private cd = inject(ChangeDetectorRef);
 
-  private fb = inject(FormBuilder);
-
-  form = this.fb.group({
-    prompt: [""],
-  });
+  input = viewChild.required<ElementRef<HTMLInputElement>>('input')
 
   response: { result: string } | undefined;
   errorMessage = "";
 
   async onSubmit() {
-    console.log(`prompt`, this.form.value.prompt);
+    console.log(`prompt`, this.input().nativeElement.value);
 
-    if (this.form.value.prompt!.length < 10) {
+    if (this.input().nativeElement.value.length < 10) {
       this.errorMessage = "Prompt length must greater than 10 characters!";
       return;
     }
@@ -86,7 +81,7 @@ export default class HomeComponent {
 
     try {
       this.response = await firstValueFrom(
-        this.aiService.getImageFromText(this.form.value.prompt!),
+        this.aiService.getImageFromText(this.input().nativeElement.value),
       );
     } catch (error: any) {
       this.errorMessage = error?.message;
@@ -102,10 +97,9 @@ export default class HomeComponent {
 
       console.log(response);
 
-      this.form.patchValue({
-        prompt: response.text,
-      });
-      this.cd.detectChanges();
+      this.input().nativeElement.value = response.text
+
+      // this.cd.detectChanges();
     } catch (error: any) {
       this.errorMessage = error?.message;
     }
