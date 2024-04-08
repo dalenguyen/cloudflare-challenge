@@ -35,14 +35,15 @@ import { FormsModule } from "@angular/forms";
     </button>
 
     @if (response?.result) {
-    <div>
-      <img
-        src="data:image/png;base64, {{ response?.result }}"
-        alt="Generated image"
-      />
-    </div>
-    } @if(errorMessage) {
-    <p class="text-red-500">{{ errorMessage }}</p>
+      <div>
+        <img
+          src="data:image/png;base64, {{ response?.result }}"
+          alt="Generated image"
+        />
+      </div>
+    }
+    @if (errorMessage) {
+      <p class="text-red-500">{{ errorMessage }}</p>
     }
   `,
   imports: [CommonModule, AudioRecorderComponent, FormsModule],
@@ -57,7 +58,7 @@ export default class HomeComponent {
   errorMessage = "";
 
   async onSubmit() {
-    this.cd.detectChanges();
+    console.log(`prompt`, this.prompt);
 
     if (this.prompt.length < 10) {
       this.errorMessage = "Prompt length must greater than 10 characters!";
@@ -68,7 +69,7 @@ export default class HomeComponent {
 
     try {
       this.response = await firstValueFrom(
-        this.aiService.getImageFromText(this.prompt)
+        this.aiService.getImageFromText(this.prompt),
       );
     } catch (error: any) {
       this.errorMessage = error?.message;
@@ -79,8 +80,10 @@ export default class HomeComponent {
     try {
       data = data.substring("data:audio/wav;base64,".length);
       const response = await firstValueFrom(
-        this.aiService.getTextFromAudio(data)
+        this.aiService.getTextFromAudio(data),
       );
+
+      console.log(response);
 
       this.prompt = response.text;
       this.cd.detectChanges();
