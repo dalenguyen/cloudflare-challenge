@@ -19,3 +19,7 @@ Run the application
 ```
 npx nx run ai
 ```
+
+## Environment
+
+Rename `.env-template` to `.env` and update the value from Cloudflare dashboard.
