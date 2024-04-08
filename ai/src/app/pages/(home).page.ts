@@ -22,7 +22,8 @@ import { FormsModule } from "@angular/forms";
       pInput
       type="text"
       id="text"
-      [(ngModel)]="prompt"
+      [ngModel]="prompt"
+      (ngModelChange)="prompt = $event"
       class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       placeholder="cyperpunk cat"
       required
@@ -52,7 +53,7 @@ export default class HomeComponent {
   private aiService = inject(AiService);
   private cd = inject(ChangeDetectorRef);
 
-  prompt = "";
+  prompt = "test";
 
   response: { result: string } | undefined;
   errorMessage = "";
