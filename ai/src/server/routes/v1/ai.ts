@@ -1,11 +1,8 @@
-const ACCOUNT_ID = process.env["CF_ACCOUNT_ID"];
-const AI_TOKEN = process.env["WORKER_AI_TOKEN"];
+import { defineEventHandler, readBody, getRequestURL, createError } from "h3";
+import { ACCOUNT_ID, AI_TOKEN, imageToText } from "../../services";
 
 // CHAT: @cf/meta/llama-2-7b-chat-int8
 const MODEL = "@cf/bytedance/stable-diffusion-xl-lightning";
-
-import { defineEventHandler, readBody, getRequestURL, createError } from "h3";
-
 export default defineEventHandler(async (event) => {
   const requestURL = await getRequestURL(event);
 
@@ -41,12 +38,18 @@ export default defineEventHandler(async (event) => {
   try {
     const result = await fetch(
       `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/ai/run/${MODEL}`,
-      requestOptions
+      requestOptions,
     ).then((response) => response.arrayBuffer());
+
+    // get description for the image
+    const { description } = await imageToText(
+      Buffer.from(result).toString("base64"),
+    );
 
     // transform image to base64, so we can return it as json
     return {
       result: Buffer.from(result).toString("base64"),
+      description,
     };
   } catch (error) {
     return error;
