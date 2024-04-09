@@ -6,9 +6,12 @@ export class AiService {
   private http = inject(HttpClient);
 
   getImageFromText(prompt: string) {
-    return this.http.post<{ result: string }>("/api/v1/ai", {
-      prompt,
-    });
+    return this.http.post<{ result: string; description: string }>(
+      "/api/v1/ai",
+      {
+        prompt,
+      },
+    );
   }
 
   getTextFromAudio(data: string) {
