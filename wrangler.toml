@@ -1,5 +1,5 @@
 name = "cloudflare-challange"
 compatibility_date = "2024-04-13"
 
-# [ai]
+[ai]
 binding = "AI"
