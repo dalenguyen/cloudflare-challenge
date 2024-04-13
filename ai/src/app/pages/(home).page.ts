@@ -10,7 +10,9 @@ import { AiService } from "../services/ai.service";
 import { firstValueFrom } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { AudioRecorderComponent } from "../components/audio.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
 @Component({
   selector: "ai-home",
   standalone: true,
@@ -21,18 +23,16 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     <app-audio-recorder (audioReady)="getTextFromAudio($event)" />
 
     <input
-      pInput
+      pInputText
       #input
       type="text"
       id="text"
-      class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      class="p-inputtext-sm flex w-full mb-4"
       placeholder="cyperpunk cat"
       required
     />
-    <button
-      class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-      (click)="onSubmit()"
-    >
+
+    <button pButton (click)="onSubmit()" size="small">
       {{ loading() ? "Generating Image..." : "Generate" }}
     </button>
 
@@ -54,7 +54,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     CommonModule,
     AudioRecorderComponent,
     FormsModule,
-    ReactiveFormsModule,
+    ButtonModule,
+    InputTextModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -69,13 +70,12 @@ export default class HomeComponent {
   loading = signal(false);
 
   async onSubmit() {
-    this.loading.set(true);
-
     if (this.input().nativeElement.value.length < 10) {
       this.errorMessage.set("Prompt length must greater than 10 characters!");
       return;
     }
 
+    this.loading.set(true);
     this.errorMessage.set("");
 
     try {

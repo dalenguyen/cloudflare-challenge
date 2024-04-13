@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
+import { PrimeNGConfig } from "primeng/api";
 
 @Component({
   selector: "ai-root",
@@ -20,4 +21,10 @@ import { RouterOutlet } from "@angular/router";
     </footer>
   `,
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  private primengConfig = inject(PrimeNGConfig);
+
+  ngOnInit() {
+    this.primengConfig.ripple = true;
+  }
+}
