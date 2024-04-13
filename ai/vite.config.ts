@@ -24,14 +24,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       analog({
         nitro: {
-          output: {
-            // this will generate the compiled files under
-            // ai/dist & the worker files will be under ai/dist/_worker.js folder
-            // test the build locally for cloudflare:
-            // BUILD_PRESET=cloudflare-pages npx nx build ai
-            dir: "./dist",
-            serverDir: "./dist/_worker.js",
-          },
+          preset: 'cloudflare-pages',
         },
         vite: {
           // Required to use the Analog SFC format

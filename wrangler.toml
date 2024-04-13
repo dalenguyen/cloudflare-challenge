@@ -1,0 +1,8 @@
+name = "cloudflare-challenge"
+compatibility_date = "2024-04-13"
+compatibility_flags = ["nodejs_compat"]
+
+pages_build_output_dir="./dist/ai/analog/public"
+
+[ai]
+binding = "AI"
