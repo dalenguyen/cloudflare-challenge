@@ -46,6 +46,12 @@
         }
       }
     },
+    "preview": {
+      "command": "wrangler pages dev dist/ai/analog/public"
+    },
+    "deploy": {
+      "command": "wrangler pages deploy dist/ai/analog/public"
+    },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
@@ -54,9 +60,7 @@
     },
     "test": {
       "executor": "@analogjs/platform:vitest",
-      "outputs": [
-        "{projectRoot}/coverage"
-      ]
+      "outputs": ["{projectRoot}/coverage"]
     }
   },
   "tags": []

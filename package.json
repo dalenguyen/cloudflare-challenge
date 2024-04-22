@@ -2,7 +2,9 @@
   "name": "@cloudflare-challenge/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "cf-typegen": "wrangler types ai/src/worker-configuration.d.ts"
+  },
   "private": true,
   "dependencies": {
     "@analogjs/content": "1.2.0",
