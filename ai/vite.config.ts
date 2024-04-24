@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
 
     build: {
       outDir: "../dist/./ai/client",
+      reportCompressedSize: true,
       target: ["es2020"],
     },
     plugins: [
