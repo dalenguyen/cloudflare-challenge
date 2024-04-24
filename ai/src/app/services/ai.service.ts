@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 
 @Injectable({ providedIn: "root" })
@@ -17,6 +17,12 @@ export class AiService {
   getTextFromAudio(data: string) {
     return this.http.post<{ text: string }>("/api/v1/ai-whisper", {
       data,
+    });
+  }
+
+  sendChat(chats: any) {
+    return this.http.post<{ result: { response: string } }>("/api/v1/ai-chat", {
+      chats,
     });
   }
 }
