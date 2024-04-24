@@ -17,6 +17,9 @@ import { lastValueFrom } from "rxjs";
         class="border p-2"
         (keyup.Enter)="sendChat()"
       />
+
+      <pre>{{ message }}</pre>
+
       <button (click)="sendChat()" class="p-2 ml-1 bg-cyan-200 rounded-sm">
         Send
       </button>
@@ -38,6 +41,7 @@ export default class ChatPage {
   chats: { role: string; content: string }[] = [];
 
   message = "";
+
   async sendChat() {
     console.log(this.message);
 
