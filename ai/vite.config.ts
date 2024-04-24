@@ -20,14 +20,7 @@ export default defineConfig(({ mode }) => {
 
     build: {
       outDir: "../dist/./ai/client",
-      reportCompressedSize: true,
-      commonjsOptions: { transformMixedEsModules: true },
       target: ["es2020"],
-    },
-    server: {
-      fs: {
-        allow: ["."],
-      },
     },
     plugins: [
       analog({
@@ -35,16 +28,7 @@ export default defineConfig(({ mode }) => {
           preset: "cloudflare-pages",
           modules: [devBindingsModule],
         },
-        vite: {
-          // Required to use the Analog SFC format
-          experimental: {
-            supportAnalogFormat: true,
-          },
-        },
       }),
-
-      nxViteTsPaths(),
-      splitVendorChunkPlugin(),
     ],
     test: {
       globals: true,
