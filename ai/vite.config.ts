@@ -4,6 +4,14 @@ import analog from "@analogjs/platform";
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 
+import { Nitro } from "nitropack";
+
+const devBindingsModule = async (nitro: Nitro) => {
+  if (nitro.options.dev) {
+    nitro.options.plugins.push("./src/dev-bindings.ts");
+  }
+};
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -24,7 +32,8 @@ export default defineConfig(({ mode }) => {
     plugins: [
       analog({
         nitro: {
-          preset: 'cloudflare-pages',
+          preset: "cloudflare-pages",
+          modules: [devBindingsModule],
         },
         vite: {
           // Required to use the Analog SFC format
