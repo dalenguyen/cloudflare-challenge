@@ -23,6 +23,11 @@ export default defineConfig(({ mode }) => {
       reportCompressedSize: true,
       target: ["es2020"],
     },
+    server: {
+      fs: {
+        allow: ["."],
+      },
+    },
     plugins: [
       analog({
         nitro: {
@@ -30,6 +35,7 @@ export default defineConfig(({ mode }) => {
           modules: [devBindingsModule],
         },
       }),
+      nxViteTsPaths(),
     ],
     test: {
       globals: true,

@@ -1,4 +1,4 @@
-import { Component, NO_ERRORS_SCHEMA, inject } from "@angular/core";
+import { Component, WritableSignal, inject, signal } from "@angular/core";
 import { AiService } from "../services/ai.service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -7,7 +7,6 @@ import { lastValueFrom } from "rxjs";
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule],
-  schemas: [NO_ERRORS_SCHEMA],
   template: `
     <h1>Chat with Llama 3</h1>
     <div class="mt-4">
@@ -18,15 +17,13 @@ import { lastValueFrom } from "rxjs";
         (keyup.Enter)="sendChat()"
       />
 
-      <pre>{{ message }}</pre>
-
       <button (click)="sendChat()" class="p-2 ml-1 bg-cyan-200 rounded-sm">
         Send
       </button>
     </div>
 
     <div class="mt-4">
-      @for (chat of chats; track chat.content) {
+      @for (chat of chats(); track chat.content) {
         <div class="py-2">
           {{ chat.role | titlecase }}:
           <span [innerHTML]="chat.content"> </span>
@@ -38,29 +35,31 @@ import { lastValueFrom } from "rxjs";
 export default class ChatPage {
   #aiService = inject(AiService);
 
-  chats: { role: string; content: string }[] = [];
+  chats: WritableSignal<{ role: string; content: string }[]> = signal([]);
 
-  message = "";
+  message = signal("");
 
   async sendChat() {
-    console.log(this.message);
+    this.chats.update((value) => [
+      ...value,
+      {
+        role: "user",
+        content: this.message(),
+      },
+    ]);
 
-    this.chats.push({
-      role: "user",
-      content: this.message,
-    });
-
-    const result = await lastValueFrom(this.#aiService.sendChat(this.chats));
-
-    console.log(result);
+    const result = await lastValueFrom(this.#aiService.sendChat(this.chats()));
 
     if (result.result?.response) {
-      this.chats.push({
-        role: "assistant",
-        content: result.result.response,
-      });
+      this.chats.update((value) => [
+        ...value,
+        {
+          role: "assistant",
+          content: result.result.response,
+        },
+      ]);
 
-      this.message = "";
+      this.message.set("");
     }
   }
 }
