@@ -74,14 +74,14 @@ export default class HomeComponent {
   }
 
   async onSubmit() {
-    this.loading.set(true);
+    this.errorMessage.set("");
 
     if (this.prompt().length < 10) {
       this.errorMessage.set("Prompt length must greater than 10 characters!");
       return;
     }
 
-    this.errorMessage.set("");
+    this.loading.set(true);
 
     try {
       const { result, description } = await firstValueFrom(
