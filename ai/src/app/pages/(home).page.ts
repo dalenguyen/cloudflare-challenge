@@ -63,6 +63,14 @@ export default class HomeComponent {
   errorMessage = signal("");
   loading = signal(false);
 
+  constructor() {
+    effect(() => {
+      if (this.prompt()) {
+        console.log(`Current prompt: `, this.prompt());
+      }
+    });
+  }
+
   async onSubmit() {
     this.errorMessage.set("");
 
