@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "../dist/./ai/client",
       reportCompressedSize: true,
-      commonjsOptions: { transformMixedEsModules: true },
       target: ["es2020"],
     },
     server: {
@@ -24,7 +23,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       analog({
         nitro: {
-          preset: 'cloudflare-pages',
+          preset: "cloudflare-pages",
         },
         vite: {
           // Required to use the Analog SFC format
