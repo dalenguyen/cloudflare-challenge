@@ -4,6 +4,14 @@ import analog from "@analogjs/platform";
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 
+import { Nitro } from "nitropack";
+
+const devBindingsModule = async (nitro: Nitro) => {
+  if (nitro.options.dev) {
+    nitro.options.plugins.push("./src/dev-bindings.ts");
+  }
+};
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -12,7 +20,7 @@ export default defineConfig(({ mode }) => {
 
     build: {
       outDir: "../dist/./ai/client",
-      // reportCompressedSize: true,
+      reportCompressedSize: true,
       target: ["es2020"],
     },
     server: {
@@ -24,11 +32,10 @@ export default defineConfig(({ mode }) => {
       analog({
         nitro: {
           preset: "cloudflare-pages",
+          modules: [devBindingsModule],
         },
       }),
-
       nxViteTsPaths(),
-      splitVendorChunkPlugin(),
     ],
     test: {
       globals: true,
